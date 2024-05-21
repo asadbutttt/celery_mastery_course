@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
 
@@ -22,7 +22,7 @@ services:
       - redis
 
   celery:
-    container_name: celery
+    container_name: celery1
     build:
       context: ./dcelery
     command: celery --app=dcelery worker -l INFO
@@ -34,3 +34,17 @@ services:
       - ALLOWED_HOSTS=localhost,127.0.0.1
     depends_on:
       - redis
+      - django
+
+  celery2:
+    container_name: celery2
+    build:
+      context: ./celeryworker
+      dockerfile: Dockerfile
+    # command: celery --app=dcelery worker -l INFO
+    command: celery -A celerytask worker -l INFO
+    volumes:
+      - ./celeryworker:/usr/src/app
+    depends_on:
+      - redis
+      - django

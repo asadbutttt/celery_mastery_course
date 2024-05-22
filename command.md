@@ -73,3 +73,19 @@ t2.apply_async(priority=5)
 t1.apply_async(priority=6)
 t3.apply_async(priority=9)
 ```
+
+Args and kwargs in celery tasks:
+Lets assume we have task
+```
+@app.task(queue="tasks")
+def t1(a, b, message=None):
+    result = a + b
+    if message:
+        result = f"{message}: {result}"
+    return
+```
+
+for this function:
+```
+t1.apply_async(args=[5,10], kwargs={'message':'The sum is'})
+```

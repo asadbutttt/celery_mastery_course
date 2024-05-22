@@ -12,6 +12,27 @@ Create new containers and start in detached mode.
 docker-compose up -d --build
 ```
 
+Remove all the containers and delete all images:
+```
+For linux:
+
+docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker rmi $(docker images -aq)
+
+For Windows:
+
+@echo off
+echo Stopping all running containers...
+for /f "tokens=*" %i in ('docker ps -aq') do docker stop %i
+
+echo Removing all containers...
+for /f "tokens=*" %i in ('docker ps -aq') do docker rm %i
+
+echo Removing all images...
+for /f "tokens=*" %i in ('docker images -aq') do docker rmi %i
+
+Windows single command:
+for /f "tokens=*" %i in ('docker ps -aq') do docker stop %i & for /f "tokens=*" %i in ('docker ps -aq') do docker rm %i & for /f "tokens=*" %i in ('docker images -aq') do docker rmi %i
+```
 ## Celery
 
 Assume there are a few shared tasks of the following format:
@@ -41,4 +62,14 @@ from celery import chain
 
 task_chain = chain(tp1.s(), tp2.s(), tp3.s(), tp4.s())
 task_chain.apply_async()
+```
+Rabbitmq task testing:
+```
+from dcelery.celery import t1,t2,t3
+t2.apply_async(priority=5)
+t1.apply_async(priority=6)
+t3.apply_async(priority=9)
+t2.apply_async(priority=5)
+t1.apply_async(priority=6)
+t3.apply_async(priority=9)
 ```

@@ -2,18 +2,23 @@ import os
 import time
 from celery import Celery
 from kombu import Queue, Exchange
+from sentry_sdk.integrations.celery import CeleryIntegration
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dcelery.settings")
 app = Celery("dcelery")
 app.config_from_object("django.conf:settings", namespace="CELERY")
+sentry_dsn = "https://ef095055ee3644b08d4cac9601e48154@o1097835.ingest.sentry.io/4505465258835968"
+sentry_sdk.init(dsn=sentry_dsn, integrations=[CeleryIntegration()])
+
 
 app.conf.task_queues = [
     Queue(
         "tasks",
         Exchange("tasks"),
         routing_key="tasks",
-        queue_arguements={"x-max-priority": 10},
+        queue_arguments={"x-max-priority": 10},
     ),
+    Queue("dead_letter", routing_key="dead_letter"),
 ]
 
 app.conf.task_acks_late = True

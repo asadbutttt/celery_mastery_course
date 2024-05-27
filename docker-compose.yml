@@ -52,15 +52,18 @@ services:
       - redis
       - django
       - rabbitmq
-  # celery2:
-  #   container_name: celery2
-  #   build:
-  #     context: ./celeryworker
-  #     dockerfile: Dockerfile
-  #   # command: celery --app=dcelery worker -l INFO
-  #   command: celery -A celerytask worker -l INFO -Q queue2
-  #   volumes:
-  #     - ./celeryworker:/usr/src/app
-  #   depends_on:
-  #     - redis
-  #     - django
+
+  celery2:
+    container_name: celery2
+    build:
+      context: ./celeryworker
+      dockerfile: Dockerfile
+    # command: celery --app=dcelery worker -l INFO
+    command: celery -A celerytask worker -l INFO
+    volumes:
+      - ./celeryworker:/usr/src/app
+    env_file:
+      - ./celeryworker/env_vars.txt
+    depends_on:
+      - redis
+      - django

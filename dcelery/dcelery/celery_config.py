@@ -2,14 +2,14 @@ import os
 import time
 from celery import Celery
 from kombu import Queue, Exchange
+import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dcelery.settings")
 app = Celery("dcelery")
 app.config_from_object("django.conf:settings", namespace="CELERY")
-sentry_dsn = "https://ef095055ee3644b08d4cac9601e48154@o1097835.ingest.sentry.io/4505465258835968"
+sentry_dsn = "https://c79b4ad68d5f9c1a43f2cc59af6d925b@o4507325552132096.ingest.us.sentry.io/4507325554098176"
 sentry_sdk.init(dsn=sentry_dsn, integrations=[CeleryIntegration()])
-
 
 app.conf.task_queues = [
     Queue(
